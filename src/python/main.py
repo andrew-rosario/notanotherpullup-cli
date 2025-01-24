@@ -18,7 +18,10 @@ def initialize_database():
     cursor.executescript(schema)
     
     conn.commit()
-    
+
+def connect_database():
+    conn = sqlite3.connect("database.db")
+
     
 def get_all_initial_workouts():
     i = 1
@@ -27,6 +30,8 @@ def get_all_initial_workouts():
         # Use the api_endpoint, iterating through each page of the workouts with the maximum page size of 10.
         response = requests.get(api_endpoint + "workouts?page" + str(i) + "&pageSize=10",headers={"api-key":api_key})
         data = response.json()
+
+
 
 def main():
     return None
