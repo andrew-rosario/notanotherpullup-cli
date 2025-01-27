@@ -15,7 +15,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE workouts (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
-    description TEXT,
+    description TEXT DEFAULT '',
     start_time TEXT NOT NULL,
     end_time TEXT NOT NULL,
     update_time TEXT NOT NULL,
