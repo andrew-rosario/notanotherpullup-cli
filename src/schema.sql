@@ -33,7 +33,7 @@ CREATE TABLE exercises (
 CREATE TABLE sets (
     exercise_id TEXT NOT NULL,
     set_id INTEGER PRIMARY KEY,
-    set_index INTEGER NOT NULL,
+    set_index INTEGER NOT NULL UNIQUE,
     set_type TEXT DEFAULT 'normal',
     weight REAL,
     reps INTEGER,
