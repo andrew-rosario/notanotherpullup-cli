@@ -25,7 +25,7 @@ CREATE TABLE workouts (
 CREATE TABLE exercises (
     workout_id TEXT,
     exercise_id INTEGER PRIMARY KEY,
-    workout_index INTEGER NOT NULL,
+    exercise_index INTEGER NOT NULL,
     exercise_title TEXT,
     exercise_notes TEXT,
     FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
