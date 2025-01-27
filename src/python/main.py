@@ -8,6 +8,7 @@ def initialize_database():
     Initializes the database with the schema.sql file
     :raises: Exception if the database already exists.
     """
+    
     if os.path.exists("database.db"):
         raise Exception("Database already exists. Please delete the database.db file before running this function.")
 
@@ -40,6 +41,7 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
     Compile all the Hevy workouts from the API into a Python list (of dictionaries).
     :return: A list of all the workouts.
     """
+    
     current_page = 1
     page_count = None
     final_list = None
@@ -55,11 +57,12 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
         else: 
             for workout in current_page["workouts"]:
                 final_list.append(workout)
-            
-        
+
         current_page += 1
         
     return final_list
+
+
 def populate_database(start_clean=True):
     """
     Populate the database with the initial workouts.
@@ -67,6 +70,7 @@ def populate_database(start_clean=True):
     If you need to update the database, please run the update_database function instead.)
     :param start_clean: Whether to start with a clean database, default is True.
     """
+    
     if start_clean:
         try:
             os.remove("database.db")
