@@ -99,7 +99,7 @@ def populate_database(start_clean=True):
         cursor.execute("INSERT INTO workouts "
                        "VALUES (?,?,?,?,?,?,?)",
                        (workout_id,title,description,start_time,end_time,updated_at,created_at))
-        cursor.commit()
+        conn.commit()
         
         for exercise in workout["exercises"]:
             exercise_index = exercise["index"]
@@ -110,7 +110,7 @@ def populate_database(start_clean=True):
                            "VALUES (?,?,?,?,?)",
                            (workout_id,exercise_id,exercise_index,exercise_title,exercise_notes))
             
-            cursor.commit()
+            conn.commit()
             
             for set in exercise["sets"]:
                 set_index = set["index"]
@@ -125,7 +125,7 @@ def populate_database(start_clean=True):
                                "VALUES (?,?,?,?,?,?,?,?,?)",
                                (exercise_id,set_id,set_index,set_type,weight,reps,distance,duration,rpe))
                 
-                cursor.commit()
+                conn.commit()
                 
                 set_id += 1
                 
