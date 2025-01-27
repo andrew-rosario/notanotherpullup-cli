@@ -20,7 +20,8 @@ def initialize_database():
     conn.commit()
 
 def connect_database():
-    conn = sqlite3.connect("database.db")
+    
+    return sqlite3.connect("database.db")
 
     
 def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/"):
