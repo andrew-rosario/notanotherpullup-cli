@@ -47,7 +47,7 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
     final_list = None
     while current_page < page_count or page_count is None:
         # Use the api_endpoint, iterating through each page of the workouts with the maximum page size of 10.
-        response = requests.get(api_endpoint + "workouts?page" + str(i) + "&pageSize=10",headers={"api-key":api_key})
+        response = requests.get(api_endpoint + "workouts?page" + str(current_page) + "&pageSize=10",headers={"api-key":api_key})
         current_page = response.json()
         if page_count is None:
             page_count = current_page["page_count"]
