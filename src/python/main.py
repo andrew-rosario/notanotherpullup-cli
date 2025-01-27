@@ -6,19 +6,32 @@ api_key = "1015d522-e3c1-49f7-9223-d275e947142a"
 def initialize_database():
     """
     Initializes the database with the schema.sql file
+    :raises: Exception if the database already exists.
     """
+    if os.path.exists("database.db"):
+        raise Exception("Database already exists. Please delete the database.db file before running this function.")
+
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     
-    with open('./schema.sql','r') as file:
-        schema = file.read()
+    try:
+        with open('./schema.sql','r') as file:
+            schema = file.read()
+    except FileNotFoundError:
+        raise Exception("schema.sql file not found.")
     
     cursor.executescript(schema)
     
     conn.commit()
 
 def connect_database():
+    """
+    Connect to the database.
+    :raises: Exception if the database does not exist.
+    """
     
+    if not os.path.exists("database.db"):
+        raise Exception("Database does not exist. Please run the initialize_database function.")
     return sqlite3.connect("database.db")
 
     
