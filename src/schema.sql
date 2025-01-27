@@ -31,7 +31,7 @@ CREATE TABLE exercises (
     FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
 );
 CREATE TABLE sets (
-    exercise_id TEXT NOT NULL,
+    exercise_id INTEGER NOT NULL,
     set_id INTEGER PRIMARY KEY,
     set_index INTEGER NOT NULL UNIQUE,
     set_type TEXT DEFAULT 'normal',
@@ -40,6 +40,6 @@ CREATE TABLE sets (
     distance REAL,
     duration INTEGER,
     rpe INTEGER,
-    FOREIGN KEY (exercise_id) REFERENCES exercises(workout_id) ON DELETE CASCADE
+    FOREIGN KEY (exercise_id) REFERENCES exercises(exercise_id) ON DELETE CASCADE
 );
 
