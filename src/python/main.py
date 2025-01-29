@@ -16,12 +16,15 @@ def initialize_database():
     cursor = conn.cursor()
     
     try:
-        with open('./schema.sql','r') as file:
+        with open('../schema.sql','r') as file:
             schema = file.read()
+            conn.executescript(schema)
     except FileNotFoundError:
+        os.remove("database.db")
         raise Exception("schema.sql file not found.")
-    
-    cursor.executescript(schema)
+    except Exception as e:
+        os.remove("database.db")
+        raise e
     
     conn.commit()
 
