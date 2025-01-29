@@ -107,8 +107,8 @@ def populate_database(api_key,start_clean=True):
         
         for exercise in workout["exercises"]:
             exercise_index = exercise["index"]
-            exercise_title = exercise["exercise_title"]
-            exercise_notes = exercise["exercise_notes"]
+            exercise_title = exercise["title"]
+            exercise_notes = exercise["notes"]
             
             cursor.execute("INSERT INTO exercises "
                            "VALUES (?,?,?,?,?)",
