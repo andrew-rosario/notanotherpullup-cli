@@ -252,6 +252,37 @@ def update_workout(workout_id, data):
     
     cursor.close()
     conn.close()
+def add_workout_locally(workout):
+    """
+    Add a workout to the database with the given data.
+    :param: workout, a dictionary with the workout data.
+    """
+    
+    id_to_search = workout["id"]
+    
+    conn = connect_database()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM workouts WHERE id = ?",(id_to_search,))
+    result = cursor.fetchall()
+    if len(result) is not None:
+        raise Exception("There already exists a workout with this ID.")
+    else:
+        workout_id = workout["id"]
+        title = workout["title"]
+        description = workout["description"]
+        start_time = workout["start_time"]
+        end_time = workout["end_time"]
+        updated_at = workout["updated_at"]
+        created_at = workout["created_at"]
+        
+        cursor.execute("INSERT INTO workouts "
+                       "VALUES (?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at))
+        
+        conn.commit
+    
+    cursor.close()
+    conn.close()
 def main():
     api_key = input("Please input the API key. (If you need help, please type 'help'): ")
     if api_key == "help":
