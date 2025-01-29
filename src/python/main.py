@@ -183,7 +183,25 @@ def main_menu(api_key):
         
         if response == "6":
             sys.exit(0)
+def get_iso8601_date_from_string(date_string):
+    """
+    Convert a date string to an ISO8601 (ie. 1970-01-01T00:00:00Z) formatted date string with no offset.
+    It accepts dates formatted only in MM/DD/YYYY. (Sorry, everywhere except Canada and United States.)
+    :param date_string: The date string to convert.
+    :return: The ISO8601 formatted date string.
+    """
     
+    components = date_string.split("/")
+    string = components[2]
+    string += "-"
+    
+    string += components[0]
+    string += "-"
+    
+    string += components[1]
+    string += "T00:00:00Z"
+    
+    return string
 def get_recent_workout_changes(date_since, api_endpoint="https://api.hevyapp.com/v1/"):
     """
     Use the Hevy API events endpoint to get a list of workout updates since a specific date.
