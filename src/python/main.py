@@ -45,23 +45,22 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
     :return: A list of all the workouts.
     """
     
-    current_page = 1
-    page_count = None
-    final_list = None
-    while current_page < page_count or page_count is None:
+    current_page_number = 1
+    page_count = -1
+    final_list = []
+    while current_page_number <= page_count or page_count == -1:
         # Use the api_endpoint, iterating through each page of the workouts with the maximum page size of 10.
-        response = requests.get(api_endpoint + "workouts?page" + str(current_page) + "&pageSize=10",headers={"api-key":api_key})
-        current_page = response.json()
-        if page_count is None:
-            page_count = current_page["page_count"]
+        response = requests.get(api_endpoint + "workouts?page=" + str(current_page_number) + "&pageSize=10",headers={"api-key":api_key})
+        current_page_dict = response.json()
+        if page_count == -1:
+            page_count = current_page_dict["page_count"]
+  
+        for workout in current_page_dict["workouts"]:
+            final_list.append(workout)
         
-        if final_list is None:
-            final_list = current_page["workouts"]
-        else: 
-            for workout in current_page["workouts"]:
-                final_list.append(workout)
+        current_page_number += 1
 
-        current_page += 1
+    print("Finished compiling all workouts.")
         
     return final_list
 
