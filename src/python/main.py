@@ -283,6 +283,18 @@ def add_workout_locally(workout):
     
     cursor.close()
     conn.close()
+def delete_workout_locally(workout_id):
+    """
+    Delete a workout in the database.
+    :param: workout_id, in UUID format.
+    """
+    conn = connect_database()
+    cursor = conn.cursor()
+    
+    cursor.execute("DELETE FROM workouts WHERE id = ?",(workout_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
 def main():
     api_key = input("Please input the API key. (If you need help, please type 'help'): ")
     if api_key == "help":
