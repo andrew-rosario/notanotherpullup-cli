@@ -137,7 +137,58 @@ def populate_database(start_clean=True):
     
     cursor.close()
     conn.close()
+def main_menu(api_key):
+    """
+    The main menu for the CLI.
+    :param: api_key: The API key for the Hevy account.
+    """
+    
+    print("Welcome to Not Another Pullup -- CLI.")
+    print("Checking if the API can be reached...")
+    
+    response = requests.get("https://api.hevyapp.com/v1/workouts/count",headers={"api-key":api_key})
+    if response.status_code != 200:
+        print("The API could not be reached. Please check your API key, otherwise the API may be down.")
+        sys.exit(0)
+    
+    if not os.path.exists("database.db"):
+        print("I cannot find a database. Do you want to create a new one using the data currently on your account?")
+        print("1. Yes")
+        print("Anything else. (This will exit the application.)")
+        response = input("Please select an option: ")
+        if response == "1":
+            initialize_database()
+            populate_database(api_key)
+        else:
+            sys.exit(0)
+            
+    done = False
+    while not done:
+                
+        menu_options = ["Update the database.",
+                        "Rebuild database.",
+                        "Search notes.",
+                        "Search workouts.",
+                        "Search exercise templates.",
+                        "Quit."]
+        menu_string = ""
+        for i in range(len(menu_options)):
+            menu_string += str(i+1) + ". " + menu_options[i] + "\n"
+        menu_string = menu_string[:-2]
+        print(menu_string)
         
+        response = input("Please select an option: ")
+        
+        if response == "6":
+            sys.exit(0)
+    
     
 def main():
-    return None
+    api_key = input("Please input the API key. (If you need help, please type 'help'): ")
+    if api_key == "help":
+        print("Please log on to the Hevy website on your browser (https://hevy.com), go to Settings, click on Developer, and generate an API key.\n"
+              "This application only works for Hevy Pro users.")
+    else:
+        main_menu(api_key)
+        
+main()
