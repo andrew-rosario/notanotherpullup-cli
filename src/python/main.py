@@ -67,7 +67,7 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
     return final_list
 
 
-def populate_database(start_clean=True):
+def populate_database(api_key,start_clean=True):
     """
     Populate the database with the initial workouts.
     (There may be unexpected behaviour if ran from any other instances.
