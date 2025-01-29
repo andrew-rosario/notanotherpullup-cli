@@ -279,7 +279,7 @@ def add_workout_locally(workout):
         cursor.execute("INSERT INTO workouts "
                        "VALUES (?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at))
         
-        conn.commit
+        conn.commit()
     
     cursor.close()
     conn.close()
