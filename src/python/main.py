@@ -220,7 +220,38 @@ def get_recent_workout_changes(date_since, api_endpoint="https://api.hevyapp.com
                 updates += event
         current_page += 1
     return updates
-
+def update_workout(workout_id, data):
+    """
+    Update the workout (if it exists) with the given data.
+    :param: workout_id, the workout ID to update.
+    :param: data, the data to update the workout with.
+    """
+    
+    conn = connect_database()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM workouts WHERE id = ?", (workout_id,))
+    result = cursor.fetchall()
+    
+    if result is None:
+        raise Exception("Workout not found.")
+    elif len(result) > 1:
+        raise Exception("More than one workout is found with this ID, somehow.")
+    else:
+        title = data["title"]
+        description = data["description"]
+        start_time = data["start_time"]
+        end_time = data["end_time"]
+        updated_at = data["updated_at"]
+        created_at = data["created_at"]
+        
+        cursor.execute("UPDATE workouts SET "
+                       "title=?,description=?,start_time=?,end_time=?,update_time=?,creation_time=? "
+                       "WHERE id =?",(title,description,start_time,end_time,updated_at,created_at,workout_id))
+        conn.commit()
+    
+    cursor.close()
+    conn.close()
 def main():
     api_key = input("Please input the API key. (If you need help, please type 'help'): ")
     if api_key == "help":
