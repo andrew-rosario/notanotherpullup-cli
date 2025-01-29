@@ -1,5 +1,6 @@
 import requests,json
 import sqlite3
+import os, sys
 import logging
 
 def initialize_database():
@@ -137,6 +138,7 @@ def populate_database(api_key,start_clean=True):
     
     cursor.close()
     conn.close()
+        
 def main_menu(api_key):
     """
     The main menu for the CLI.
