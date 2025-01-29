@@ -1,7 +1,6 @@
 import requests,json
 import sqlite3
-import os
-api_key = "1015d522-e3c1-49f7-9223-d275e947142a"
+import logging
 
 def initialize_database():
     """
@@ -58,6 +57,9 @@ def get_all_initial_workouts(api_key,api_endpoint="https://api.hevyapp.com/v1/")
         for workout in current_page_dict["workouts"]:
             final_list.append(workout)
         
+        percent = round((current_page_number/page_count)*100, 2)
+        print("Progress " + str(percent) + "%.")
+        logging.debug("Finished compiling page " + str(current_page_number) + " of workouts.")
         current_page_number += 1
 
     print("Finished compiling all workouts.")
