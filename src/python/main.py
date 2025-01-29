@@ -184,7 +184,43 @@ def main_menu(api_key):
         if response == "6":
             sys.exit(0)
     
+def get_recent_workout_changes(date_since, api_endpoint="https://api.hevyapp.com/v1/"):
+    """
+    Use the Hevy API events endpoint to get a list of workout updates since a specific date.
+    This includes new, modified, and deleted workouts.
     
+    Please see the README for how the API delivers the JSON response.
+    
+    :param date: The date to get the updates since, in ISO8601 format. (Example: "2021-01-01T00:00:00Z") (Note that hours and seconds matters; for the entire day, specify midnight. Offsets are not supported.)
+    """
+    updates = None
+    current_page = 1
+    page_count = None
+    
+    # Replace the colons in the date string with %3A to make it URL-safe.
+    new_str = []
+    for c in date_since:
+        if c == ":":
+            new_str += "%3A"
+        else:
+            new_str += c
+    
+    date_since = "".join(new_str)
+        
+    while current_page <= page_count or page_count is None:
+        response = requests.get(api_endpoint + "/workouts/events?page" + str(current_page) + "&pageSize=10&since=" + date_since,headers={"api-key":api_key})
+        current_page = response.json()
+        if page_count is None:
+            page_count = current_page["page_count"]
+        
+        if updates is None:
+            updates = current_page["events"]
+        else:
+            for event in current_page["events"]:
+                updates += event
+        current_page += 1
+    return updates
+
 def main():
     api_key = input("Please input the API key. (If you need help, please type 'help'): ")
     if api_key == "help":
