@@ -281,12 +281,125 @@ class NotAnotherPullupMain:
         conn.commit()
         cursor.close()
         conn.close()
+class CLIInterface:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.client = None
+        self.database_util = None
+        
+    def menu_printer(self,menu_options):
+        menu_string = ""
+        for i in range(len(menu_options)):
+            menu_string += str(i+1) + ". " + menu_options[i] + "\n"
+        menu_string = menu_string[:-1]
+        print(menu_string)
+
+    def main_menu(self):
+        """
+        The main menu for the CLI.
+        :param: api_key: The API key for the Hevy account.
+        """
+        
+        print("Welcome to Not Another Pullup -- CLI.")
+        print("Checking if the API can be reached...")
+        
+        response = requests.get("https://api.hevyapp.com/v1/workouts/count",headers={"api-key":self.api_key})
+        if response.status_code != 200:
+            print("The API could not be reached. Please check your API key, otherwise the API may be down.")
+            sys.exit(0)
+        
+        self.client = NotAnotherPullupMain(self.api_key)
+        
+        if not os.path.exists("database.db"):
+            print("I cannot find a database. Do you want to create a new one using the data currently on your account?")
+            print("1. Yes")
+            print("Anything else. (This will exit the application.)")
+            response = input("Please select an option: ")
+            if response == "1":
+                self.client.initialize_database()
+                self.client.populate_database(self.api_key)
+            else:
+                sys.exit(0)
+                
+        done = False
+        
+        self.database_util = DatabaseUtilities("database.db")
+        while not done:
+                    
+            menu_options = ["Database operations.",
+                            "Get data.",
+                            "Search data.",
+                            "Calculate insights.",
+                            "Quit."]
+            self.menu_printer(menu_options)
+            
+            response = input("Please select an option: ")
+            actual_response = menu_options[int(response)-1]
+            
+            # This is to accommodate adding more options later.
+            if actual_response == "Quit.":
+                sys.exit(0)
+            elif actual_response == "Database operations.":
+                self.database_operations()
+    
+    def database_operations(self):
+        """
+        The database operations menu.
+        """
+        done = False
+        while not done:
+            menu_options = ["Update database.",
+                            "Rebuild database.",
+                            "Backup database.",
+                            "Go back to main menu."]
+            
+            self.menu_printer(menu_options)
+            
+            response = input("Please select an option: ")
+            actual_response = menu_options[int(response)-1]
+            
+            if actual_response == "Go back to main menu.":
+                done = True
+            elif actual_response == "Update database.":
+                print("Updating database...")
+                self.client.update_database()
+            elif actual_response == "Rebuild database.":
+                print("This process will remove the current database and rebuild it. Are you sure you want to continue?")
+                self.menu_printer(["Yes.","No."])
+                try:
+                    response = input("Please select an option: ")
+                    actual_response = ["Yes.","No."][int(response)-1]
+                except IndexError:
+                    actual_response = "No."
+    
+                if actual_response == "Yes.":
+                    self.client.initiate_rebuild()
+                elif actual_response == "No.":
+                    pass
+            elif actual_response == "Backup database.":
+                print("This will create a backup of the database. It will be saved as 'thecurrent dateandtime_backup.db.'")
+                print("Are you sure you want to continue?")
+                self.menu_printer(["Yes.","No."])
+                try:
+                    response = input("Please select an option: ")
+                    actual_response = menu_options[int(response)-1]
+                except IndexError:
+                    actual_response = "No."
+    
+                if actual_response == "Yes.":
+                    self.client.backup_database()
+                elif actual_response == "No.":
+                    pass
+                    
+              
 def main():
     api_key = input("Please input the API key. (If you need help, please type 'help'): ")
     if api_key == "help":
         print("Please log on to the Hevy website on your browser (https://hevy.com), go to Settings, click on Developer, and generate an API key.\n"
               "This application only works for Hevy Pro users.")
     else:
-        main_menu(api_key)
+        interface = CLIInterface(api_key)
+        interface.main_menu()
         
-main()
+if __name__ == "__main__":
+    main()
