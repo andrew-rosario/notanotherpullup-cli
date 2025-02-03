@@ -25,3 +25,8 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+.idea/misc.xml
+.idea/modules.xml
+.idea/notanotherpullup-cli.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
