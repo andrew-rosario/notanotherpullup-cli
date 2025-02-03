@@ -188,10 +188,10 @@ class NotAnotherPullupMain:
                 exercise_index = exercise["index"]
                 exercise_title = exercise["title"]
                 exercise_notes = exercise["notes"]
-                
+                exercise_template_id = exercise["exercise_template_id"]
                 cursor.execute("INSERT INTO exercises "
-                            "VALUES (?,?,?,?,?)",
-                            (workout_id,exercise_id,exercise_index,exercise_title,exercise_notes))
+                            "VALUES (?,?,?,?,?,?)",
+                            (workout_id,exercise_id,exercise_index,exercise_title,exercise_notes,exercise_template_id))
                 
                 conn.commit()
                 
