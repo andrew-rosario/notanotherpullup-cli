@@ -463,6 +463,12 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query)
         return results.fetchall()
+    def convert_kg_to_lbs(self,kg,truncate=False):
+        # Most gyms only do .5 increments for pounds, so I should truncate the result if the user wants.
+        if truncate:
+            return round(kg * 2.20462,1)
+        else:
+            return kg * 2.20462
 class CLInterface:
     def __init__(self, api_key):
         self.api_key = api_key
