@@ -281,6 +281,17 @@ class NotAnotherPullupMain:
         conn.commit()
         cursor.close()
         conn.close()
+        
+class DatabaseUtilities:
+    def __init__(self, database_path=""):
+        self.database_path = database_path
+        try:
+            if not os.path.isfile(database_path):
+                raise Exception("Database does not exist.")
+            self.conn = sqlite3.connect(database_path)
+            self.cursor = self.conn.cursor()
+        except Exception as e:
+            raise e
 class CLIInterface:
     def __init__(self, api_key):
         self.api_key = api_key
