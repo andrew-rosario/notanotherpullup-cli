@@ -43,3 +43,25 @@ CREATE TABLE sets (
     FOREIGN KEY (exercise_id) REFERENCES exercises(exercise_id) ON DELETE CASCADE
 );
 
+CREATE TABLE exercise_templates(
+    template_id INTEGER PRIMARY KEY,
+    exercise_title TEXT NOT NULL,
+    type TEXT NOT NULL,
+    primary_muscle_group_id INTEGER NOT NULL,
+    is_custom BOOLEAN NOT NULL,
+    FOREIGN KEY (primary_muscle_group_id) REFERENCES muscle_groups(muscle_id) ON DELETE CASCADE
+);
+
+CREATE TABLE muscle_groups(
+    muscle_id INTEGER PRIMARY KEY,
+    muscle_name TEXT NOT NULL
+);
+
+CREATE TABLE secondary_muscle_groups(
+    template_id INTEGER NOT NULL,
+    muscle_id INTEGER NOT NULL,
+    PRIMARY KEY (template_id, muscle_id),
+    FOREIGN KEY (template_id) REFERENCES exercise_templates (template_id) ON DELETE CASCADE,
+    FOREIGN KEY (muscle_id) REFERENCES muscle_groups (muscle_id) ON DELETE CASCADE
+);
+
