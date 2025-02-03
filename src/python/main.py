@@ -451,7 +451,7 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query,("%" + keyword + "%",))
         return results.fetchall()
-class CLIInterface:
+class CLInterface:
     def __init__(self, api_key):
         self.api_key = api_key
         self.client = None
@@ -569,7 +569,7 @@ def main():
         print("Please log on to the Hevy website on your browser (https://hevy.com), go to Settings, click on Developer, and generate an API key.\n"
               "This application only works for Hevy Pro users.")
     else:
-        interface = CLIInterface(api_key)
+        interface = CLInterface(api_key)
         interface.main_menu()
         
 if __name__ == "__main__":
