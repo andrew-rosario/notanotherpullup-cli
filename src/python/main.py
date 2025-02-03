@@ -76,6 +76,50 @@ class NotAnotherPullupMain:
             
         return final_list
 
+    def get_exercise_templates(self,api_endpoint="https://api.hevyapp.com/v1/") -> list:
+        """
+        Get all the exercise templates from the Hevy API.
+        """
+        
+        # TODO: Make function that reuses the process of getting all JSON data from the API, then replace all instances of this process with the new function.
+        
+        # TODO: Add exercise_templates table to the database schema.
+        
+        # -------------------
+        # Discussion:
+        #  Hevy API does not have an API call for exercise template updates.
+        #
+        #  I have two options:
+        # 1. Replace the table every time with the new data (which I have to do if I update the exercise table since a user might have done a workout with a new exercise template).
+        # 2. Find a way to get the new exercise templates and add them to the table. (This is more efficient but the data lacks ANY timestamps.)
+        # 
+        # 3. I should crossreference all exercises in the workouts and see if any of them are not in the exercise_templates table. If they are not, that means there are new exercise templates. The API does provide a way to get a exercise template by ID, so this could work.
+        
+        # Honestly, option 1 is just easier for now. But option 3 is definitely the long-term solution.
+        
+        #-------------------
+        
+        current_page_number = 1
+        page_count = -1
+        final_list = []
+        while current_page_number <= page_count or page_count == -1:
+            # Okay, the base Hevy set of exercise templates is over 500. This page size now makes sense.
+            response = requests.get(api_endpoint + "exercise_templates?page=" + str(current_page_number) + "&pageSize=100",headers={"api-key":self.api_key})
+            current_page_dict = response.json()
+            if page_count == -1:
+                page_count = current_page_dict["page_count"]
+                
+            for exercise_template in current_page_dict["exercise_templates"]:
+                final_list.append(exercise_template)
+
+            percent = round((current_page_number/page_count)*100, 2)
+            print("Progress " + str(percent) + "%.")
+            logging.debug("Finished compiling page " + str(current_page_number) + " of exercise templates.")
+            current_page_number += 1
+        print("Finished compiling all exercise templates.")
+        return final_list
+            
+
     def populate_database(self,start_clean=True) -> None:
         """
         Populate the database with the initial workouts.
@@ -149,6 +193,61 @@ class NotAnotherPullupMain:
                 exercise_id += 1
  
         print("Finished adding all workouts to the database.")
+        print("Adding exercise templates to the database...")
+        exercise_templates = self.get_exercise_templates()
+        
+        # TODO: Make separate function for putting exercise templates into the table. Then replace this code with the function.
+        
+        muscle_group_ids = {}
+        muscle_group_index = 1
+        
+        for exercise_template in exercise_templates:
+            template_id = exercise_template["id"]
+            title = exercise_template["title"]
+            # Exercise type could be "weight_reps", "reps_only", "duration", "bodyweight_weighted", or "bodyweight_assisted".
+            # I should go into the Hevy app and make one of each type to see what the API returns.
+            exercise_type = exercise_template["type"]
+            primary_muscle = exercise_template["primary_muscle_group"]
+            
+            if primary_muscle not in muscle_group_ids.keys():
+                print("Muscle group " + primary_muscle + " not found in muscle_group. Adding to muscle_groups table.")
+                muscle_group_ids[primary_muscle] = muscle_group_index
+                cursor.execute("INSERT INTO muscle_groups "
+                               "VALUES (?,?)",(muscle_group_index, primary_muscle))
+                conn.commit()
+                muscle_group_index += 1
+                
+            is_custom = exercise_template["is_custom"]
+            
+            cursor.execute("INSERT INTO exercise_templates "
+                           "VALUES (?,?,?,?,?)",
+                           (template_id,title,exercise_type,muscle_group_ids[primary_muscle],is_custom))
+            
+            conn.commit()
+            # Do the same existence check for secondary muscle groups.
+            template_index = 1
+            secondary_muscle_group = exercise_template["secondary_muscle_groups"]
+            for secondary_muscle in secondary_muscle_group:
+                if secondary_muscle not in muscle_group_ids.keys():
+                    muscle_group_ids[secondary_muscle] = muscle_group_index
+                    
+                    print("Muscle group " + secondary_muscle + " not found in muscle_group. Adding to muscle_groups table.")
+
+                    cursor.execute("INSERT INTO muscle_groups "
+                                   "VALUES (?,?)",(muscle_group_index, secondary_muscle))
+                    conn.commit()
+                    muscle_group_index += 1
+                
+                cursor.execute("INSERT INTO secondary_muscle_groups "
+                               "VALUES (?,?)",
+                               (template_id,muscle_group_ids[secondary_muscle]))
+            conn.commit()
+            
+            if template_index % 20:
+                print("Finished adding exercise template " + template_id + " to the database.")
+            template_index += 1
+
+        print("Finished adding all exercise templates to the database.")
                 
             
         cursor.close()
