@@ -478,7 +478,7 @@ class CLInterface:
     def menu_printer(self,menu_options):
         menu_string = ""
         for i in range(len(menu_options)):
-            menu_string += str(i+1) + ". " + menu_options[i] + "\n"
+            menu_string += str(i+1) + ". " + str(menu_options[i]) + "\n"
         menu_string = menu_string[:-1]
         print(menu_string)
 
