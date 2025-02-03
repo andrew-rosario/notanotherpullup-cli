@@ -4,6 +4,7 @@ This is the testing portion of the Not Another Pullup application, using this pr
 
 Besides from helping me figure out the backend of this application, it also has some useful utility functions for Hevy Pro users.
 
+
 ### Planned Features
 
 - Get the information you can already get in the app (PRs, most done exercises, all exercise templates, etc.)
@@ -34,6 +35,30 @@ Besides from helping me figure out the backend of this application, it also has 
   - I don't know if this is done on device, or it is already stored on the account.
   - That's why I am reverse engineering all of the PRs and milestones by hand lol and having those endpoints would honestly make my work too easy.
 
+### Preset Hevy Muscle Groups
+Since I am currently handling the muscle group table creation through for-loops, I am just compiling a list of all the muscle groups that Hevy supports.
+
+Since Hevy can add muscle groups at any time, I will continue using the for-loops, but for speed, I might just add these values in the schema specification.
+- Biceps
+- Abdominals
+- Cardio
+- Shoulders
+- Chest
+- Upper Back
+- Quadriceps
+- Glutes
+- Lower Back
+- Full Body
+- Forearms
+- Triceps
+- Calves
+- Lats
+- Abductors
+- Adductors
+  - To this day, I don't really get why they separated these two muscle groups (lol). And they are (IIRC) only used for the Hip Adductor and Abductor machines (even more lol).
+- Traps
+- Neck
+- Other
 ### Hevy Workout JSON Format
 
 - Workout ID
