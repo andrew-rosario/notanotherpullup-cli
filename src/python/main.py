@@ -451,6 +451,12 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query,("%" + keyword + "%",))
         return results.fetchall()
+
+    def get_exercise_name_by_template_id(self,template_id):
+        query = "SELECT exercise_title FROM exercise_templates WHERE id = ?"
+        
+        results = self.cursor.execute(query,(template_id,))
+        return results.fetchall()
 class CLInterface:
     def __init__(self, api_key):
         self.api_key = api_key
