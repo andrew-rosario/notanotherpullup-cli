@@ -1,6 +1,8 @@
 import requests,json
 import sqlite3
-import os, sys, shutil, datetime
+import os, sys
+from shutil import copy
+from datetime import datetime
 import logging
 
 class NotAnotherPullupMain:
@@ -44,6 +46,19 @@ class NotAnotherPullupMain:
             raise e
         
         conn.commit()
+
+    def backup_database(self) -> None:
+        """
+        Backup the database.
+        """
+        current_date = datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+        copy("database.db","database_backups/"+current_date +"_database.db")
+        
+        try: 
+            assert os.path.exists("database_backups/"+current_date +"_database.db")
+        except AssertionError:
+            raise Exception("Backup failed.")
+        print("Backup successful.")
 
     def connect_database(self) -> sqlite3.Connection:
         """
@@ -532,12 +547,13 @@ class CLIInterface:
                 elif actual_response == "No.":
                     pass
             elif actual_response == "Backup database.":
+                #TODO: Instantiate the menu options in a separate variable later.
                 print("This will create a backup of the database. It will be saved as 'thecurrent dateandtime_backup.db.'")
                 print("Are you sure you want to continue?")
                 self.menu_printer(["Yes.","No."])
                 try:
                     response = input("Please select an option: ")
-                    actual_response = menu_options[int(response)-1]
+                    actual_response = ["Yes.","No."][int(response)-1]
                 except IndexError:
                     actual_response = "No."
     
