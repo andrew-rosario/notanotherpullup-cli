@@ -11,6 +11,15 @@ class NotAnotherPullupMain:
         except AssertionError:
             raise Exception("API key is empty. This class cannot function without an API key.")
         self.api_key = api_key
+    
+    def initiate_rebuild(self) -> None:
+        """
+        Rebuild the database.
+        """
+        os.remove("database.db")
+        self.initialize_database()
+        self.populate_database()
+
     def initialize_database(self) -> None:
         """
         Initializes the database with the schema.sql file
