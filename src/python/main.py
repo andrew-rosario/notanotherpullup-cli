@@ -97,6 +97,9 @@ class NotAnotherPullupMain:
         
         exercise_id = 1
         set_id = 1
+        
+        print("Populating database with workouts...")
+        
         for workout in workouts:
             cursor = conn.cursor()
             
@@ -141,8 +144,11 @@ class NotAnotherPullupMain:
                     
                     set_id += 1
                     
+                if exercise_id % 20:
+                    print("Finished adding workout " + workout_id + " to the database.")
                 exercise_id += 1
  
+        print("Finished adding all workouts to the database.")
                 
             
         cursor.close()
