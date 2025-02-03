@@ -457,6 +457,12 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query,(template_id,))
         return results.fetchall()
+    def get_all_workouts(self, descending=True):
+        query = "SELECT title,creation_time,id FROM workouts" +" ORDER BY creation_time"
+        query += " DESC" if descending else " ASC"
+        
+        results = self.cursor.execute(query)
+        return results.fetchall()
 class CLInterface:
     def __init__(self, api_key):
         self.api_key = api_key
