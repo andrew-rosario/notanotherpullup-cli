@@ -292,6 +292,22 @@ class DatabaseUtilities:
             self.cursor = self.conn.cursor()
         except Exception as e:
             raise e
+        
+    def get_all_exercise_notes(self,descending=True):
+        try:
+            assert self.conn is not None
+            assert self.cursor is not None
+        except AssertionError:
+            raise Exception("Database connection not established.")
+        
+        
+        query = "SELECT workouts.creation_time, exercises.exercise_title, exercises.exercise_notes FROM workouts INNER JOIN exercises ON workouts.id = exercises.workout_id WHERE exercises.exercise_notes != '' ORDER BY workouts.creation_time"
+        
+        query += " DESC" if descending else " ASC"
+        
+        results = self.cursor.execute(query)
+        return results.fetchall()
+
 class CLIInterface:
     def __init__(self, api_key):
         self.api_key = api_key
