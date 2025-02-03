@@ -529,6 +529,10 @@ class CLInterface:
                 sys.exit(0)
             elif actual_response == "Database operations.":
                 self.database_operations()
+            elif actual_response == "Get data.":
+                self.data_gathering()
+            else:
+                print("I didn't code that yet.")
     
     def database_operations(self):
         """
@@ -579,6 +583,93 @@ class CLInterface:
                     self.client.backup_database()
                 elif actual_response == "No.":
                     pass
+    def data_gathering(self):
+        done = False
+        while not done:
+            menu_options = ["Get all workouts.",
+                            "Get all workout notes.",
+                            "Get all exercises.",
+                            "Get all exercise notes.",
+                            "Get all exercise templates.",
+                            "Get all muscle groups.",
+                            "Go back to main menu."]
+            self.menu_printer(menu_options)
+            response = input("Please select an option: ")
+            actual_response = menu_options[int(response)-1]
+            
+            if actual_response == "Go back to main menu.":
+                done = True
+            elif actual_response == "Get all workouts.":
+                workouts = self.database_util.get_all_workouts()
+                
+                total_pages = len(workouts) // 10
+                last_page_length = len(workouts) % 10
+                
+                if last_page_length: 
+                    total_pages += 1
+                
+                perusing = True
+                current_page = 1
+                while perusing:
+                    # Python slicing is inclusive for the start and exclusive for the end.
+
+                    start_range = 10 * (current_page -1)
+                    end_range = 10 * (current_page) if last_page_length != 0 else 10 * (current_page - 1) + last_page_length
+                    
+                    print("Page " + str(current_page) + "/" + str(total_pages))
+                    page = workouts[start_range:end_range]
+                    
+                    self.menu_printer(page)
+                    menu_options = ["Open workout.",
+                                    "Next page.",
+                                    "Previous page.",
+                                    "Go to page number #.",
+                                    "Go back to main menu."]
+                    self.menu_printer(menu_options)
+                    
+                    response = input("Please select an option: ")
+                    try:
+                        response = int(response)
+                        assert response > 0
+                    except ValueError:
+                        print("This is not a valid number.")
+                    except AssertionError:
+                        print("This is not a valid number.")
+                        
+                    
+                    else:
+                        actual_response = menu_options[response-1]
+                        if actual_response == "Go back to main menu.":
+                            perusing = False
+                        elif actual_response == "Next page.":
+                            if current_page == total_pages:
+                                print("You are already on the last page.")
+                            elif current_page < total_pages:
+                                current_page += 1
+                        elif actual_response == "Previous page.":
+                            if current_page == 1:
+                                print("You are already on the first page.")
+                            elif current_page > 1:
+                                current_page -= 1
+                        elif actual_response == "Go to page number #.":
+                            response = input("Please input the page number: ")
+                            try:
+                                current_page = int(response)
+                                if current_page < 1 or current_page > total_pages:
+                                    print("Invalid page number.")
+                            except ValueError:
+                                print("Invalid page number.")
+                        elif actual_response == "Open workout.":
+                            response = input("Select a workout number to open: ")
+                            try:
+                                workout = page[int(response)-1]
+                            except IndexError:
+                                print("Invalid workout number.")
+                            except ValueError:
+                                print("Not a valid number.")
+                            else:
+                                self.database_options.get_more_details_on_workout(workout[0])
+                    
                     
               
 def main():
