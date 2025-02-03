@@ -44,7 +44,7 @@ CREATE TABLE sets (
 );
 
 CREATE TABLE exercise_templates(
-    template_id INTEGER PRIMARY KEY,
+    template_id TEXT PRIMARY KEY,
     exercise_title TEXT NOT NULL,
     type TEXT NOT NULL,
     primary_muscle_group_id INTEGER NOT NULL,
@@ -58,10 +58,10 @@ CREATE TABLE muscle_groups(
 );
 
 CREATE TABLE secondary_muscle_groups(
-    template_id INTEGER NOT NULL,
+    template_id TEXT NOT NULL,
     muscle_id INTEGER NOT NULL,
     PRIMARY KEY (template_id, muscle_id),
     FOREIGN KEY (template_id) REFERENCES exercise_templates (template_id) ON DELETE CASCADE,
-    FOREIGN KEY (muscle_id) REFERENCES muscle_groups (muscle_id) ON DELETE CASCADE
+    FOREIGN KEY (muscle_id) REFERENCES muscle_groups(muscle_id) ON DELETE CASCADE
 );
 
