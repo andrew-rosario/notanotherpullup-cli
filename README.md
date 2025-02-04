@@ -89,3 +89,13 @@ Since Hevy can add muscle groups at any time, I will continue using the for-loop
   - ...
   - ...
 -
+### Hevy Latest Events JSON Format
+#### New/Updated
+- Type (new or updated)
+- Workout
+  - See workout format above.
+
+#### Deleted
+- Type (deleted)
+- Workout ID
+- Deletion time
