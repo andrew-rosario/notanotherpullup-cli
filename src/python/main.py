@@ -501,6 +501,11 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query,("%" + keyword + "%",))
         return results.fetchall()
+    def get_notes_by_exercise_name(self,exercise_name, descending=True):
+        query = "SELECT exercises.notes, workout.creation_date FROM exercises INNER JOIN workouts ON exercises.workout_id = workouts.id WHERE exercises.exercise_title = ? ORDER BY workouts.creation_date"
+
+        query += " DESC" if descending else " ASC"
+        self.cursor.execute(query, (exercise_name,))
 
     def get_exercise_name_by_template_id(self,template_id):
         query = "SELECT exercise_title FROM exercise_templates WHERE id = ?"
