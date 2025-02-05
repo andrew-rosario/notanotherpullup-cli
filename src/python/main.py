@@ -182,7 +182,7 @@ class NotAnotherPullupMain:
             
             
             cursor.execute("INSERT INTO workouts "
-                        "VALUES (?,?,?,?,?,?,?)",
+                        "VALUES (?,?,?,?,?,?,?,?)",
                         (workout_id,title,description,start_time,end_time,updated_at,created_at,added_on))
             conn.commit()
             
