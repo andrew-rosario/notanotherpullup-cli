@@ -387,6 +387,8 @@ class NotAnotherPullupMain:
                 print("Workout not found. There was nothing to update.")
             else:
                 title = data["title"]
+                print("Updating workout " + title + ".")
+
                 description = data["description"]
                 start_time = data["start_time"]
                 end_time = data["end_time"]
@@ -420,6 +422,7 @@ class NotAnotherPullupMain:
         if result is not None:
             print("There already exists a workout with this ID. It was not added.")
         else:
+            print("Adding workout.")
             workout_id = workout["id"]
             title = workout["title"]
             description = workout["description"]
@@ -433,6 +436,7 @@ class NotAnotherPullupMain:
                         "VALUES (?,?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at,added_on))
             
             conn.commit()
+            print("Workout added.")
         
         cursor.close()
         conn.close()
@@ -450,8 +454,10 @@ class NotAnotherPullupMain:
         if results is None:
             print("Workout not found. Nothing was deleted.")
         else:
+            print("Deleting workout.")
             cursor.execute("DELETE FROM workouts WHERE id = ?",(workout_id,))
             conn.commit()
+            print("Workout deleted.")
         cursor.close()
         conn.close()
         
