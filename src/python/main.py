@@ -329,20 +329,9 @@ class NotAnotherPullupMain:
                     
         while current_page <= page_count or page_count == -1:
             response = requests.get(api_endpoint + "workouts/events?page" + str(current_page) + "&pageSize=10&since=" + date_since,headers={"api-key":self.api_key})
-            current_page = response.json()
+            current_page_dict = response.json()
             if page_count == -1:
-                page_count = current_page["page_count"]
-            
-            if updates is None:
-                updates = current_page["events"]
-            else:
-                for event in current_page["events"]:
-                    if event["type"] == "added":
-                        updates["added"].append(event)
-                    elif event["type"] == "updated":
-                        updates["updated"].append(event)
-                    elif event["type"] == "deleted":
-                        updates["deleted"].append(event)
+                page_count = current_page_dict["page_count"]
             
             current_page += 1
         return updates
