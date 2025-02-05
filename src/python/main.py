@@ -328,7 +328,7 @@ class NotAnotherPullupMain:
                 
                     
         while current_page <= page_count or page_count == -1:
-            response = requests.get(api_endpoint + "/workouts/events?page" + str(current_page) + "&pageSize=10&since=" + date_since,headers={"api-key":self.api_key})
+            response = requests.get(api_endpoint + "workouts/events?page" + str(current_page) + "&pageSize=10&since=" + date_since,headers={"api-key":self.api_key})
             current_page = response.json()
             if page_count == -1:
                 page_count = current_page["page_count"]
