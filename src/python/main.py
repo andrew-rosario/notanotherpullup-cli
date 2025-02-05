@@ -557,6 +557,8 @@ class CLInterface:
         if response.status_code != 200:
             print("The API could not be reached. Please check your API key, otherwise the API may be down.")
             sys.exit(0)
+        else:
+            print("Wow, you've done " + str(response.json()["workout_count"]) + " workouts. That's impressive.") if response.json()["workout_count"] != 0 else print("You haven't done any workouts yet... Girl, you better get to work.")
         
         self.client = NotAnotherPullupMain(self.api_key)
         
