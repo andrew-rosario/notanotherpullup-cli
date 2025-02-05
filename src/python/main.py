@@ -332,6 +332,15 @@ class NotAnotherPullupMain:
             current_page_dict = response.json()
             if page_count == -1:
                 page_count = current_page_dict["page_count"]
+                
+            if "events" not in current_page_dict.keys():
+                break
+           
+            for event in current_page_dict["events"]:
+                if event["type"] == "updated":
+                    updates["updated"].append(event)
+                elif event["type"] == "deleted":
+                    updates["deleted"].append(event)
             
             current_page += 1
         return updates
@@ -339,13 +348,21 @@ class NotAnotherPullupMain:
     def update_database(self) -> None:
         updates = self.get_recent_workout_changes()
         
-        if sum(len(updates["added"]),len(updates["updated"]),len(updates["deleted"])) == 0:
+        if len(updates["updated"]) + len(updates["deleted"]) == 0:
             print("No updates found.")
         else:
-            for event in updates["added"]:
-                self.add_workout_locally(event["workout"])
             for event in updates["updated"]:
-                self.update_workout_locally(event["workout"]["id"],event["workout"])
+                conn = self.connect_database()
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM workouts WHERE id = ?",(event["workout"]["id"],))
+                exists = cursor.fetchall()
+                cursor.close()
+                conn.close()
+                if exists == []:
+                    self.add_workout_locally(event["workout"])
+                else:
+                    self.update_workout_locally(event["workout"]["id"],event["workout"])
+                
             for event in updates["deleted"]:
                 self.delete_workout_locally(event["id"])
             print("Finished updating the database.")
