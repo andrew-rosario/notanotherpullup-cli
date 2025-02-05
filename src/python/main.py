@@ -512,6 +512,13 @@ class DatabaseUtilities:
         
         results = self.cursor.execute(query,(template_id,))
         return results.fetchone()
+    
+    def get_template_id_by_exercise_name(self,exercise_name):
+        query = "SELECT id FROM exercise_templates WHERE exercise_title = ?"
+        
+        results = self.cursor.execute(query,(exercise_name,))
+        return results.fetchone()
+    
     def get_all_workouts(self, descending=True):
         query = "SELECT title,creation_time,id FROM workouts" +" ORDER BY creation_time"
         query += " DESC" if descending else " ASC"
