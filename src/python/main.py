@@ -306,7 +306,7 @@ class NotAnotherPullupMain:
         conn = self.connect_database()
         cursor = conn.cursor()
         
-        cursor.execute("SELECT MAX(added_to) FROM workouts")
+        cursor.execute("SELECT MAX(added_on) FROM workouts")
         
         return cursor.fetchone()[0]
 
