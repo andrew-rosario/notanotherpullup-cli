@@ -217,6 +217,9 @@ class NotAnotherPullupMain:
                 if exercise_id % 20:
                     print("Finished adding workout " + workout_id + " to the database.")
                 exercise_id += 1
+            if exercise_id % 20:
+                print("Finished adding workout " + workout_id + " to the database.")
+                
  
         print("Finished adding all workouts to the database.")
         print("Adding exercise templates to the database...")
