@@ -733,7 +733,79 @@ class CLInterface:
                                 print("Not a valid number.")
                             else:
                                 self.database_options.get_more_details_on_workout(workout[0])
+            elif actual_response == "Get all workout notes.":
+                perusing = True
+                while perusing:
+                    menu_options = ["Get all notes",
+                                    "Get by exercise name.",
+                                    "Get by date range.",
+                                    "Go up one level."]
+                    self.menu_printer(menu_options)
+                    response = input("Please select an option: ")
+                    actual_response = menu_options[int(response)-1]
                     
+                    if actual_response == "Get all notes.":
+                        # TODO: Find a way to put this code in a separate function because it is just too much, man. 
+                        notes = self.database_util.get_all_exercise_notes()
+                    elif actual_response == "Get by exercise name.":
+                        exercise_name = input("Please input the exercise name: ")
+                        notes = self.database_util.get_notes_by_exercise_name(exercise_name)
+                    elif actual_response == "Get by date range.":
+                        print("I haven't coded this yet.")
+                    elif actual_response == "Go up one level.":
+                        perusing = False
+                    total_pages = len(notes) // 10
+                    last_page_length = len(notes) % 10
+                    
+                    if last_page_length:
+                        total_pages += 1
+                        
+                    current_page = 1
+                    while perusing:
+                        start_range = 10 * (current_page -1)
+                        end_range = 10 * (current_page) if last_page_length != 0 else 10 * (current_page - 1) + last_page_length
+                        
+                        print("Page " + str(current_page) + "/" + str(total_pages))
+                        page = notes[start_range:end_range]
+                        
+                        self.menu_printer(page)
+                        menu_options = ["Next page.",
+                                        "Previous page.",
+                                        "Go to page number #.",
+                                        "Go back to main menu."]
+                        self.menu_printer(menu_options)
+                        
+                        response = input("Please select an option: ")
+                        try:
+                            response = int(response)
+                            assert response > 0
+                        except ValueError:
+                            print("This is not a valid number.")
+                        except AssertionError:
+                            print("This is not a valid number.")
+                        else:
+                            actual_response = menu_options[response-1]
+                            if actual_response == "Go back to main menu.":
+                                perusing = False
+                            elif actual_response == "Next page.":
+                                if current_page == total_pages:
+                                    print("You are already on the last page.")
+                                elif current_page < total_pages:
+                                    current_page += 1
+                            elif actual_response == "Previous page.":
+                                if current_page == 1:
+                                    print("You are already on the first page.")
+                                elif current_page > 1:
+                                    current_page -= 1
+                            elif actual_response == "Go to page number #.":
+                                response = input("Please input the page number: ")
+                                try:
+                                    current_page = int(response)
+                                    if current_page < 1 or current_page > total_pages:
+                                        print("Invalid page number.")
+                                except ValueError:
+                                    print("Invalid page number.")
+                
                     
               
 def main():
