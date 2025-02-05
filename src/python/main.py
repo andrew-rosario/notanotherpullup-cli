@@ -511,7 +511,7 @@ class DatabaseUtilities:
         query = "SELECT exercise_title FROM exercise_templates WHERE id = ?"
         
         results = self.cursor.execute(query,(template_id,))
-        return results.fetchall()
+        return results.fetchone()
     def get_all_workouts(self, descending=True):
         query = "SELECT title,creation_time,id FROM workouts" +" ORDER BY creation_time"
         query += " DESC" if descending else " ASC"
