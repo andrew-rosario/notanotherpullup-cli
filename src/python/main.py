@@ -419,7 +419,7 @@ class NotAnotherPullupMain:
         
         cursor.execute("SELECT * FROM workouts WHERE id = ?",(id_to_search,))
         result = cursor.fetchall()
-        if result is not None:
+        if result != []:
             print("There already exists a workout with this ID. It was not added.")
         else:
             print("Adding workout.")
