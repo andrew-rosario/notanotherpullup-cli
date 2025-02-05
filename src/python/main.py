@@ -563,7 +563,7 @@ class CLInterface:
         self.client = NotAnotherPullupMain(self.api_key)
         
         if not os.path.exists("database.db"):
-            print("I cannot find a database. Do you want to create a new one using the data currently on your account?")
+            print("I cannot find a local database. Do you want to create a new one using the data currently on your account?")
             print("1. Yes")
             print("Anything else. (This will exit the application.)")
             response = input("Please select an option: ")
@@ -577,7 +577,7 @@ class CLInterface:
         
         self.database_util = DatabaseUtilities("database.db")
         while not done:
-                    
+            print("--- Main Menu ---")
             menu_options = ["Database operations.",
                             "Get data.",
                             "Search data.",
