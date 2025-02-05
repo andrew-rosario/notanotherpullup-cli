@@ -167,6 +167,7 @@ class NotAnotherPullupMain:
         set_id = 1
         
         print("Populating database with workouts...")
+        added_on = datetime.now(datetime.timezone.utc).isoformat()
         
         for workout in workouts:
             cursor = conn.cursor()
@@ -179,9 +180,10 @@ class NotAnotherPullupMain:
             updated_at = workout["updated_at"]
             created_at = workout["created_at"]
             
+            
             cursor.execute("INSERT INTO workouts "
                         "VALUES (?,?,?,?,?,?,?)",
-                        (workout_id,title,description,start_time,end_time,updated_at,created_at))
+                        (workout_id,title,description,start_time,end_time,updated_at,created_at,added_on))
             conn.commit()
             
             for exercise in workout["exercises"]:
@@ -346,22 +348,25 @@ class NotAnotherPullupMain:
         cursor.execute("SELECT * FROM workouts WHERE id = ?", (workout_id,))
         result = cursor.fetchall()
         
-        if result is None:
-            raise Exception("Workout not found.")
-        elif len(result) > 1:
-            raise Exception("More than one workout is found with this ID, somehow.")
-        else:
-            title = data["title"]
-            description = data["description"]
-            start_time = data["start_time"]
-            end_time = data["end_time"]
-            updated_at = data["updated_at"]
-            created_at = data["created_at"]
-            
-            cursor.execute("UPDATE workouts SET "
-                        "title=?,description=?,start_time=?,end_time=?,update_time=?,creation_time=? "
-                        "WHERE id =?",(title,description,start_time,end_time,updated_at,created_at,workout_id))
-            conn.commit()
+
+        try:
+            if result is None:
+                print("Workout not found. There was nothing to update.")
+            else:
+                title = data["title"]
+                description = data["description"]
+                start_time = data["start_time"]
+                end_time = data["end_time"]
+                updated_at = data["updated_at"]
+                created_at = data["created_at"]
+                added_on = datetime.now(datetime.timezone.utc).isoformat()
+
+                cursor.execute("UPDATE workouts SET "
+                            "title=?,description=?,start_time=?,end_time=?,update_time=?,creation_time=?,added_on=? "
+                            "WHERE id =?",(title,description,start_time,end_time,updated_at,created_at,added_on,workout_id))
+                conn.commit()
+        except KeyError:
+            print("Data is missing. Workout was not updated.")
         
         cursor.close()
         conn.close()
@@ -376,11 +381,12 @@ class NotAnotherPullupMain:
         
         conn = self.connect_database()
         cursor = conn.cursor()
+
         
         cursor.execute("SELECT * FROM workouts WHERE id = ?",(id_to_search,))
         result = cursor.fetchall()
-        if len(result) is not None:
-            raise Exception("There already exists a workout with this ID.")
+        if result is not None:
+            print("There already exists a workout with this ID. It was not added.")
         else:
             workout_id = workout["id"]
             title = workout["title"]
@@ -389,9 +395,11 @@ class NotAnotherPullupMain:
             end_time = workout["end_time"]
             updated_at = workout["updated_at"]
             created_at = workout["created_at"]
+            added_on = datetime.now(datetime.timezone.utc).isoformat()
+
             
             cursor.execute("INSERT INTO workouts "
-                        "VALUES (?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at))
+                        "VALUES (?,?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at,added_on))
             
             conn.commit()
         
@@ -406,8 +414,13 @@ class NotAnotherPullupMain:
         conn = self.connect_database()
         cursor = conn.cursor()
         
-        cursor.execute("DELETE FROM workouts WHERE id = ?",(workout_id,))
-        conn.commit()
+        cursor.execute("SELECT * FROM workouts WHERE id = ?",(workout_id,))
+        results = cursor.fetchall()
+        if results is None:
+            print("Workout not found. Nothing was deleted.")
+        else:
+            cursor.execute("DELETE FROM workouts WHERE id = ?",(workout_id,))
+            conn.commit()
         cursor.close()
         conn.close()
         
