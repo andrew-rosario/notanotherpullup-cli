@@ -19,7 +19,8 @@ CREATE TABLE workouts (
     start_time TEXT NOT NULL,
     end_time TEXT NOT NULL,
     update_time TEXT NOT NULL,
-    creation_time TEXT NOT NULL
+    creation_time TEXT NOT NULL,
+    added_on TEXT NOT NULL
 );
 
 CREATE TABLE exercises (
