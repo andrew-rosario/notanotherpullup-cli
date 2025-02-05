@@ -299,42 +299,66 @@ class NotAnotherPullupMain:
         
         return string
 
-    def get_recent_workout_changes(self,date_since, api_endpoint="https://api.hevyapp.com/v1/") -> list:
+    def get_latest_added_workout_date(self,api_endpoint="https://api.hevyapp.com/v1/") -> str:
         """
-        Use the Hevy API events endpoint to get a list of workout updates since a specific date.
-        This includes new, modified, and deleted workouts.
-        
-        Please see the README for how the API delivers the JSON response.
-        
-        :param date: The date to get the updates since, in ISO8601 format. (Example: "2021-01-01T00:00:00Z") (Note that hours and seconds matters; for the entire day, specify midnight. Offsets are not supported.)
+        Get the most recent workout date on the database.
         """
-        updates = None
+        conn = self.connect_database()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT MAX(added_to) FROM workouts")
+        
+        return cursor.fetchone()[0]
+
+    def get_recent_workout_changes(self, api_endpoint="https://api.hevyapp.com/v1/") -> list:
+        """
+        Use the Hevy API events endpoint to get a list of workout updates since the last update.
+        """
+        
+        updates = {"added":[],"updated":[],"deleted":[]}
         current_page = 1
-        page_count = None
+        page_count = -1
         
-        # Replace the colons in the date string with %3A to make it URL-safe.
-        new_str = []
-        for c in date_since:
-            if c == ":":
-                new_str += "%3A"
-            else:
-                new_str += c
-        
-        date_since = "".join(new_str)
-            
-        while current_page <= page_count or page_count is None:
+        date_since = self.get_latest_added_workout_date()
+        # Make it URL-safe.
+        date_since = date_since.replace(":","%3A") 
+                
+                    
+        while current_page <= page_count or page_count == -1:
             response = requests.get(api_endpoint + "/workouts/events?page" + str(current_page) + "&pageSize=10&since=" + date_since,headers={"api-key":self.api_key})
             current_page = response.json()
-            if page_count is None:
+            if page_count is -1:
                 page_count = current_page["page_count"]
             
             if updates is None:
                 updates = current_page["events"]
             else:
                 for event in current_page["events"]:
-                    updates += event
+                    if event["type"] == "added":
+                        updates["added"].append(event)
+                    elif event["type"] == "updated":
+                        updates["updated"].append(event)
+                    elif event["type"] == "deleted":
+                        updates["deleted"].append(event)
+            
             current_page += 1
         return updates
+    
+    def update_database(self) -> None:
+        updates = self.get_recent_workout_changes()
+        
+        if sum(len(updates["added"]),len(updates["updated"]),len(updates["deleted"])) == 0:
+            print("No updates found.")
+        else:
+            for event in updates["added"]:
+                self.add_workout_locally(event["workout"])
+            for event in updates["updated"]:
+                self.update_workout_locally(event["workout"]["id"],event["workout"])
+            for event in updates["deleted"]:
+                self.delete_workout_locally(event["id"])
+            print("Finished updating the database.")
+            
+    
     def update_workout_locally(self,workout_id, data):
         """
         Update the workout (if it exists) with the given data.
