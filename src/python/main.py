@@ -2,7 +2,7 @@ import requests,json
 import sqlite3
 import os, sys
 from shutil import copy
-import datetime
+from datetime import datetime, timezone
 import logging
 
 class NotAnotherPullupMain:
@@ -167,7 +167,7 @@ class NotAnotherPullupMain:
         set_id = 1
         
         print("Populating database with workouts...")
-        added_on = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        added_on = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         
         for workout in workouts:
             cursor = conn.cursor()
@@ -383,8 +383,7 @@ class NotAnotherPullupMain:
                 end_time = data["end_time"]
                 updated_at = data["updated_at"]
                 created_at = data["created_at"]
-                added_on = datetime.datetime.now(datetime.timezone.utc).isoformat()
-
+                added_on = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
                 cursor.execute("UPDATE workouts SET "
                             "title=?,description=?,start_time=?,end_time=?,update_time=?,creation_time=?,added_on=? "
                             "WHERE id =?",(title,description,start_time,end_time,updated_at,created_at,added_on,workout_id))
@@ -419,8 +418,7 @@ class NotAnotherPullupMain:
             end_time = workout["end_time"]
             updated_at = workout["updated_at"]
             created_at = workout["created_at"]
-            added_on = datetime.datetime.now(datetime.timezone.utc).isoformat()
-
+            added_on = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             
             cursor.execute("INSERT INTO workouts "
                         "VALUES (?,?,?,?,?,?,?,?)", (workout_id,title,description,start_time,end_time,updated_at,created_at,added_on))
